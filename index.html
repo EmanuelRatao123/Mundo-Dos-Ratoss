@@ -547,17 +547,6 @@
             const canvas = document.getElementById('worldCanvas');
             const ctx = canvas.getContext('2d');
             
-            // Carregar sprites
-            worldState.sprites = {
-                idle: new Image(),
-                walk1: new Image(),
-                walk2: new Image()
-            };
-            
-            worldState.sprites.idle.src = 'Sprites/Parado/Parado.png';
-            worldState.sprites.walk1.src = 'Sprites/Andando/Andando1.png';
-            worldState.sprites.walk2.src = 'Sprites/Andando/Andando2.png';
-            
             document.addEventListener('keydown', (e) => {
                 worldState.keys[e.key] = true;
             });
@@ -589,7 +578,6 @@
                     isMoving = true;
                 }
                 
-                // Atualizar animação
                 const currentTime = Date.now();
                 const deltaTime = currentTime - lastTime;
                 
@@ -599,9 +587,7 @@
                         worldState.animationTimer = 0;
                         worldState.animationFrame = worldState.animationFrame === 0 ? 1 : 0;
                     }
-                    worldState.currentSprite = worldState.animationFrame === 0 ? 'walk1' : 'walk2';
                 } else {
-                    worldState.currentSprite = 'idle';
                     worldState.animationFrame = 0;
                     worldState.animationTimer = 0;
                 }
@@ -629,17 +615,35 @@
                     ctx.stroke();
                 }
                 
-                // Player sprite
-                const sprite = worldState.sprites[worldState.currentSprite];
-                if (sprite.complete) {
-                    ctx.drawImage(sprite, worldState.playerX - 75, worldState.playerY - 50, 150, 100);
+                // Player (desenho pixel art)
+                ctx.fillStyle = '#0ff';
+                const px = worldState.playerX;
+                const py = worldState.playerY;
+                
+                // Corpo
+                ctx.fillRect(px - 30, py - 20, 60, 40);
+                // Cabeça
+                ctx.fillRect(px - 20, py - 40, 40, 20);
+                // Olhos
+                ctx.fillStyle = '#000';
+                ctx.fillRect(px - 15, py - 35, 8, 8);
+                ctx.fillRect(px + 7, py - 35, 8, 8);
+                
+                // Pernas (animação)
+                ctx.fillStyle = '#0ff';
+                if (worldState.animationFrame === 0) {
+                    ctx.fillRect(px - 25, py + 20, 15, 25);
+                    ctx.fillRect(px + 10, py + 20, 15, 25);
+                } else {
+                    ctx.fillRect(px - 20, py + 20, 15, 25);
+                    ctx.fillRect(px + 5, py + 20, 15, 25);
                 }
                 
                 // Ratão companion
                 ctx.fillStyle = '#ff0';
                 ctx.font = '32px "Press Start 2P"';
                 ctx.textAlign = 'center';
-                ctx.fillText('🐀', worldState.playerX + 50, worldState.playerY);
+                ctx.fillText('🐀', worldState.playerX + 80, worldState.playerY);
                 
                 // Info
                 ctx.fillStyle = '#fff';
